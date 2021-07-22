@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class DragController : MonoBehaviour
 {
-    [SerializeField]  private Transform _dragParent;
+    [SerializeField] private Transform _dragParent;
 
     private DragAndDrop _selectedItem;
 

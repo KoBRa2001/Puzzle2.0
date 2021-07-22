@@ -1,32 +1,55 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class ItemSlot : MonoBehaviour//, IDropHandler
 {   
-    [SerializeField] private DragController _dragController;
-    [SerializeField] private ItemInfo diamond;
-    private bool isEmpty = true;
+    [SerializeField] private DiamandItem _diamondPrefab;
+
+    private DragController _dragController;
+    private GridController _gridController;
+
+    private DiamandItem _itemInSlot;
+
+    private bool isEmpty => _itemInSlot == null;
+
+    public int x; 
+    public int y; 
+
+    public void Setup(DragController dragController, GridController gridController)
+    {
+        _dragController = dragController;
+        _gridController = gridController;
+    }
+
+    public void ClearSlot()
+    {
+        if (_itemInSlot == null)
+            return;
+
+        Destroy(_itemInSlot.gameObject);
+        _itemInSlot = null;
+    }
 
     private void OnMouseOver()
-    {        
+    {
+        if (!isEmpty)
+            return;
 
-        if (isEmpty)
+        if (Input.GetMouseButtonUp(0) && _dragController.HasSelectedItem())
         {
-            if (Input.GetMouseButtonUp(0) && _dragController.HasSelectedItem())
-            {
-                GameObject item = _dragController.TakeSelectedItem().gameObject;
-                if (item.GetComponent<ItemInfo>())
-                {
-                    diamond.type = item.GetComponent<ItemInfo>().type;
-                    Destroy(item);
+            var selectedItem = _dragController.TakeSelectedItem();
 
-                    diamond.transform.localScale = new Vector3(0.03f, 0.03f, 0.03f);
-                    Instantiate(diamond, transform);
-                    isEmpty = false;
-                }                
-            }
+            _itemInSlot = Instantiate(_diamondPrefab, transform);
+            _itemInSlot.SetSprite(selectedItem.Icon);            
+            Destroy(selectedItem.gameObject);
+            
+            _gridController.SetCell(x, y);
         }
+
     }
+
+    
 }

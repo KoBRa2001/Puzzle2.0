@@ -12,6 +12,10 @@ public class ItemInfo : MonoBehaviour
         string path = "Icons/" + type.ToString();
         Sprite icon = Resources.Load<Sprite>(path);
 
+
+        if (gameObject.TryGetComponent<Image>(out var result))
+            result.sprite = icon;
+
         if (gameObject.GetComponent<Image>())
         {
             gameObject.GetComponent<Image>().sprite = icon;

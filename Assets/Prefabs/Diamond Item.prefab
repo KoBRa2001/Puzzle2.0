@@ -11,8 +11,7 @@ GameObject:
   - component: {fileID: 1153452906496383408}
   - component: {fileID: 1153452906496383415}
   - component: {fileID: 1153452906496383414}
-  - component: {fileID: 1153452906496383413}
-  - component: {fileID: -6331643281101974696}
+  - component: {fileID: 8940789968902478771}
   m_Layer: 0
   m_Name: Diamond Item
   m_TagString: Untagged
@@ -29,7 +28,7 @@ Transform:
   m_GameObject: {fileID: 1153452906496383412}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.03, y: 0.03, z: 0.03}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -49,6 +48,7 @@ SpriteRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -101,16 +101,16 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 2.54, y: 2.51}
+    oldSize: {x: 1, y: 0.988189}
     newSize: {x: 0.16, y: 0.16}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.16, y: 0.16}
+  m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
---- !u!114 &1153452906496383413
+--- !u!114 &8940789968902478771
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -119,20 +119,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1153452906496383412}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 15805738a835e9c469d94cf55f4fec52, type: 3}
+  m_Script: {fileID: 11500000, guid: 178430dd302915f4b921a7e35b18eb85, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _dragController: {fileID: 0}
---- !u!114 &-6331643281101974696
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1153452906496383412}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d7f822b593fcf154994e9747af08b51b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  type: 0
+  _spriteRenderer: {fileID: 1153452906496383415}
