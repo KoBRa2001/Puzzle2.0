@@ -15,8 +15,20 @@ public class ItemSlot : MonoBehaviour//, IDropHandler
 
     private bool isEmpty => _itemInSlot == null;
 
+    public Sprite icon;
+
     public int x; 
     public int y; 
+
+    public void SetupPrefab(DiamandItem newPrefab)
+    {
+        _diamondPrefab = newPrefab;
+    }
+
+    public bool CheckSlot()
+    {
+        return isEmpty;
+    }
 
     public void Setup(DragController dragController, GridController gridController)
     {
@@ -29,10 +41,10 @@ public class ItemSlot : MonoBehaviour//, IDropHandler
         if (_itemInSlot == null)
             return;
 
-        Destroy(_itemInSlot.gameObject);
+        Destroy(_itemInSlot.gameObject);       
         _itemInSlot = null;
     }
-
+    
     private void OnMouseOver()
     {
         if (!isEmpty)
@@ -41,15 +53,27 @@ public class ItemSlot : MonoBehaviour//, IDropHandler
         if (Input.GetMouseButtonUp(0) && _dragController.HasSelectedItem())
         {
             var selectedItem = _dragController.TakeSelectedItem();
+            icon = selectedItem.Icon;
+            foreach (var item in selectedItem.DiamondsDragList)
+            {
+                item.TakeSlot(icon);
+            }
 
-            _itemInSlot = Instantiate(_diamondPrefab, transform);
-            _itemInSlot.SetSprite(selectedItem.Icon);            
             Destroy(selectedItem.gameObject);
-            
-            _gridController.SetCell(x, y);
+            _gridController.CalculateCollapse();
         }
 
     }
 
-    
+    public void SetItemInSlot(DiamandItem item)
+    {
+        _itemInSlot = item;
+        if (icon != null)
+            _itemInSlot.SetSprite(icon);       
+    }
+
+    public void SetCell()
+    {        
+        _gridController.SetCell(x, y);
+    }
 }

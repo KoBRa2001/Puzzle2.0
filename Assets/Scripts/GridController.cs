@@ -59,7 +59,13 @@ public class GridController : MonoBehaviour
         cells[x, y] = true;
 
 
-        if (IsPossibleCollapse(x, y))
+        //if (IsPossibleCollapse(x, y))
+        //    VerifyGrid();
+    }
+
+    public void CalculateCollapse()
+    {
+        //if (IsPossibleCollapse())
             VerifyGrid();
     }
 
@@ -100,7 +106,7 @@ public class GridController : MonoBehaviour
         }
         for(int y = 0; y < heigth; y++)
         {
-            for (int j = 0; j < heigth; j++)
+            for (int j = 0; j < width; j++)
             {
                 if (!cells[j, y])
                 {
@@ -123,35 +129,64 @@ public class GridController : MonoBehaviour
         //return null;
     }
 
-    public bool IsPossibleCollapse(int x, int y)
+    public bool IsPossibleCollapse(/*int x, int y*/)
     {
         bool rowsResult = true;
         bool columnsResult = true;
-        for(int i = 0; i < width; i++)
-        {
-            if (!cells[x, i])
+
+        for (int i = 0; i < width; i++)
+        {            
+            for (int j = 0; j < heigth; j++)
             {
-                columnsResult = false;
-                break;
+                rowsResult = rowsResult && cells[i, j];                                
             }
-        }
-        for(int j = 0; j < heigth; j++)
-        {
-            if (!cells[j, y])
-            {
-                rowsResult = false;
-                break;
-            }
+            if (rowsResult)
+                break;            
         }
 
-        if (rowsResult && !columnsResult)
+        for (int i = 0; i < width; i++)
         {
-            Debug.Log("Row " + y + " is full");
+            for (int j = 0; j < heigth; j++)
+            {
+                columnsResult = columnsResult && cells[i, j];
+            }
+            if (columnsResult)
+                break;
         }
-        if (columnsResult)
-        {
-            Debug.Log("Column " + x + " is full");
-        }
+
+        //for(int i = 0; i < width; i++)
+        //{
+        //    if (!cells[x, i])
+        //    {
+        //        columnsResult = false;
+        //        break;
+        //    }
+        //}
+        //for(int j = 0; j < heigth; j++)
+        //{
+        //    if (!cells[j, y])
+        //    {
+        //        rowsResult = false;
+        //        break;
+        //    }
+        //}
+        Debug.Log("Rows " + rowsResult + " Columns " + columnsResult);
+        Debug.Log("Return result " + (rowsResult || columnsResult));
+        //if (rowsResult && !columnsResult)
+        //{
+        //    Debug.Log("Row is full");
+        //    //Debug.Log("Row " + y + " is full");
+        //}
+        //if (!rowsResult && columnsResult)
+        //{
+        //    //Debug.Log("Column " + x + " is full");
+        //    Debug.Log("Column is full");
+        //}
+        //if (rowsResult && columnsResult)
+        //{
+        //    //Debug.Log("Column " + x + " is full and Row " + y + " is full");
+        //    Debug.Log("Column is full and Row is full");
+        //}
 
         return rowsResult || columnsResult;
     }

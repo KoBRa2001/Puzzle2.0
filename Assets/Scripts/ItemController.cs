@@ -6,17 +6,17 @@ public class ItemController : MonoBehaviour
 {
     [Header("Refernces")]
     [SerializeField] private DragController _dragController;
-    [SerializeField] private DragAndDrop _itemPrefab;
-    [SerializeField] private Transform _parentPanel;
+    [SerializeField] private List<DragAndDrop> _itemPrefab;
+    [SerializeField] private List<Transform> _parentPanel;
 
     [Header("Parameters")]
     [SerializeField] private int Count;
 
-    private List<DragAndDrop> _items;
+    private List<DragAndDrop> _items;    
 
     private void Awake()
     {
-        _items = new List<DragAndDrop>(Count);
+        _items = new List<DragAndDrop>(Count);        
     }
 
     private void Start()
@@ -40,8 +40,8 @@ public class ItemController : MonoBehaviour
     {
         for (int i = 0; i < Count; i++)
         {
-            var newItem = Instantiate(_itemPrefab, _parentPanel);
-
+            int rand = Random.Range(0, _itemPrefab.Count);
+            var newItem = Instantiate(_itemPrefab[rand], _parentPanel[i]);
             newItem.Setup(_dragController);
             newItem.SetRand();
             newItem.OnDestroyEvent += () => DeleteItem(newItem);

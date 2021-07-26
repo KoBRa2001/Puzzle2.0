@@ -9,6 +9,7 @@ public class DragController : MonoBehaviour
     private DragAndDrop _selectedItem;
 
     public DragAndDrop SelectedItem => _selectedItem;
+    public DiamandItem DiamondPrefab;
     
     public void SetItem(DragAndDrop item)
     {
@@ -16,7 +17,8 @@ public class DragController : MonoBehaviour
             _selectedItem.Reset();
 
         _selectedItem = item;
-        _selectedItem.transform.SetParent(_dragParent);
+        _selectedItem.transform.SetParent(_dragParent);        
+        //DiamondPrefab = item.DiamondPrefab;
     }
 
     public DragAndDrop TakeSelectedItem()
@@ -24,10 +26,15 @@ public class DragController : MonoBehaviour
         var item = _selectedItem;
         _selectedItem = null;
         return item;
-    }
+    }    
 
     public bool HasSelectedItem()
     {
-        return _selectedItem != null;
+        if(_selectedItem != null)
+        {
+            return _selectedItem.CheckFreeCells();
+        }
+        return false;
+        //return _selectedItem != null;
     }
 }

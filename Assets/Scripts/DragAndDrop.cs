@@ -9,7 +9,7 @@ public class DragAndDrop : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
 {
     [SerializeField] private DragController _dragController;
     [SerializeField] private Image _image; 
-    [SerializeField] private Sprite _icon;
+    [SerializeField] private Sprite _icon;    
 
 
     public event Action OnDestroyEvent = null;
@@ -18,9 +18,12 @@ public class DragAndDrop : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
     private Camera _camera;
 
     private Transform startParent;
-    private Vector3 startPosition;
+    //private Vector3 startPosition;
 
     public Sprite Icon => _icon;
+
+    public List<RaycastReader> DiamondsDragList;
+    public DiamandItem DiamondPrefab;
 
     private void Awake()
     {
@@ -32,7 +35,7 @@ public class DragAndDrop : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
     private void Start()
     {
         startParent = transform.parent;
-        startPosition = transform.position;        
+        //startPosition = transform.localPosition;        
     }
 
     public void Setup(DragController dragController)
@@ -40,11 +43,16 @@ public class DragAndDrop : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
         _dragController = dragController;
     }
 
+    public void SetupList(RaycastReader item)
+    {
+        DiamondsDragList.Add(item);
+    }
+
     public void OnBeginDrag(PointerEventData touch)
     {
-        _dragController.SetItem(this);
-        
-        canvasGroup.blocksRaycasts = false;        
+        _dragController.SetItem(this);        
+        canvasGroup.blocksRaycasts = false;
+        transform.localScale = new Vector3Int(2, 2, 2);
     }
 
     internal void SetRand()
@@ -59,23 +67,44 @@ public class DragAndDrop : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
 
     public void OnDrag(PointerEventData touch)
     {
-        transform.position = _camera.ScreenPointToRay(touch.position).origin;
+        transform.position = _camera.ScreenPointToRay(touch.position).origin;        
     }    
 
     public void OnEndDrag(PointerEventData eventData)
-    {
+    {        
         if (_dragController.SelectedItem == this)
             Reset();
 
         canvasGroup.blocksRaycasts = true;
     }
 
+    public bool CheckFreeCells()
+    {
+        foreach(var item in DiamondsDragList)
+        {
+            if (!item.IsOverSlot())
+                return false;
+        }       
+        return true;
+    }
+
+    public bool SetAllCells()
+    {
+        foreach (var item in DiamondsDragList)
+        {
+            if (!item.IsOverSlot())
+                return false;
+        }
+        return true;
+    }   
+
     public void Reset()
     {
         transform.SetParent(startParent);
-        transform.position = startPosition;
+        transform.position = startParent.position;
+        transform.localScale = new Vector3Int(1, 1, 1);
     }
-
+    
     private void OnDestroy()
     {
         OnDestroyEvent?.Invoke();
