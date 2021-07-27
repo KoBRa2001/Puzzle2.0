@@ -1,7 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[Obsolete("Dont use")]
 public class RaycastReader : MonoBehaviour
 {
     [SerializeField] private DragAndDrop Parent;
@@ -11,7 +13,7 @@ public class RaycastReader : MonoBehaviour
 
     private void Awake()
     {
-        Parent.SetupList(this);
+        //Parent.SetupList(this);
     }
 
     public void TakeSlot(Sprite icon)
@@ -24,7 +26,6 @@ public class RaycastReader : MonoBehaviour
             if (slot != null)
             {
                 CreateDiamond();
-                slot.SetCell();
                 slot.icon = icon;
                 parentInstantiate = hit.transform;
             }

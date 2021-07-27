@@ -22,14 +22,24 @@ public class DragAndDrop : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
 
     public Sprite Icon => _icon;
 
-    public List<RaycastReader> DiamondsDragList;
-    public DiamandItem DiamondPrefab;
 
+    [SerializeField] private List<RectTransform> _childDiamonds;
+    public List<Vector2Int> ChildPosition;
+
+    
     private void Awake()
     {
         _camera = Camera.main;
         
         canvasGroup = GetComponent<CanvasGroup>();
+
+        foreach (var child in _childDiamonds)
+        {
+            Vector2Int newPosition = Vector2Int.FloorToInt(child.transform.position - transform.position);
+            ChildPosition.Add(newPosition);
+        }
+        ChildPosition.Add(Vector2Int.zero);
+
     }
 
     private void Start()
@@ -41,18 +51,12 @@ public class DragAndDrop : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
     public void Setup(DragController dragController)
     {
         _dragController = dragController;
-    }
-
-    public void SetupList(RaycastReader item)
-    {
-        DiamondsDragList.Add(item);
-    }
+    }   
 
     public void OnBeginDrag(PointerEventData touch)
     {
         _dragController.SetItem(this);        
-        canvasGroup.blocksRaycasts = false;
-        transform.localScale = new Vector3Int(2, 2, 2);
+        canvasGroup.blocksRaycasts = false;        
     }
 
     internal void SetRand()
@@ -72,41 +76,20 @@ public class DragAndDrop : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
 
     public void OnEndDrag(PointerEventData eventData)
     {        
-        if (_dragController.SelectedItem == this)
+    //if (_dragController.SelectedItem == this)
             Reset();
 
         canvasGroup.blocksRaycasts = true;
     }
-
-    public bool CheckFreeCells()
+    
+    public void Clear()
     {
-        foreach(var item in DiamondsDragList)
-        {
-            if (!item.IsOverSlot())
-                return false;
-        }       
-        return true;
+        OnDestroyEvent?.Invoke();
     }
-
-    public bool SetAllCells()
-    {
-        foreach (var item in DiamondsDragList)
-        {
-            if (!item.IsOverSlot())
-                return false;
-        }
-        return true;
-    }   
 
     public void Reset()
     {
         transform.SetParent(startParent);
         transform.position = startParent.position;
-        transform.localScale = new Vector3Int(1, 1, 1);
-    }
-    
-    private void OnDestroy()
-    {
-        OnDestroyEvent?.Invoke();
     }
 }

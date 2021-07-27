@@ -54,11 +54,33 @@ public class GridController : MonoBehaviour
         itemCells[i, j] = newSlot;
     }
 
-    public void SetCell(int x, int y)
+    public bool CheckCell(int x, int y, DragAndDrop item)
     {
+        if (item == null)
+            return false;
+
+        foreach(var position in item.ChildPosition)
+        {          
+            //If out of bounds
+            if (x + position.x >= Mathf.Sqrt(cells.Length) || y + position.y >= Mathf.Sqrt(cells.Length))
+            {
+                return false;
+            }
+            if (cells[x + position.x, y + position.y] == true)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public void SetCell(int x, int y, DiamandItem prefab)
+    {
+        DiamandItem newDiamond = Instantiate(prefab, itemCells[x, y].transform);
+        itemCells[x, y].SetItemInSlot(newDiamond);
         cells[x, y] = true;
 
-
+        CalculateCollapse();
         //if (IsPossibleCollapse(x, y))
         //    VerifyGrid();
     }
@@ -67,6 +89,45 @@ public class GridController : MonoBehaviour
     {
         //if (IsPossibleCollapse())
             VerifyGrid();
+    }
+
+    public bool CheckGameOver()
+    {
+        Debug.LogWarning("CheckGameOver");
+
+        var items = _itemController.GetAvailableItems();
+
+        foreach(var item in items)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                for (int i = 0; i < heigth; i++)
+                {
+                    if (CheckCell(x, i, item))
+                    {
+                        Debug.LogError($"Put here {x} {i} + {item.ChildPosition.Count}");
+
+                        foreach (var p in item.ChildPosition)
+                        {
+                            var t = new Vector2Int(x, i);
+                            t += p;
+                            Debug.LogError(cells[t.x, t.y]);
+
+                        }
+                        return false;
+                    }                 
+                }                
+            }
+                     
+        }
+        Debug.LogError($"Cant find pos");
+
+        return true;
+    }
+
+    private bool IsOn(int x, int y)
+    {
+        return !(x < 0 || y < 0 || x >= width || y >= heigth);
     }
 
     private void VerifyGrid()
@@ -80,7 +141,7 @@ public class GridController : MonoBehaviour
     }
 
     public HashSet<Vector2Int> GetDeletedItems()
-    {
+    {        
         HashSet<Vector2Int> items = new HashSet<Vector2Int>();
         List<Vector2Int> tempItems = new List<Vector2Int>();
 
@@ -89,7 +150,7 @@ public class GridController : MonoBehaviour
             for (int i = 0; i < heigth; i++)
             {
                 if (!cells[x, i])
-                {
+                {                    
                     tempItems.Clear();
                     break;
                 }

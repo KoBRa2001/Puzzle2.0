@@ -7,12 +7,12 @@ public class ItemController : MonoBehaviour
     [Header("Refernces")]
     [SerializeField] private DragController _dragController;
     [SerializeField] private List<DragAndDrop> _itemPrefab;
-    [SerializeField] private List<Transform> _parentPanel;
+    [SerializeField] private Transform _parentPanel;
 
     [Header("Parameters")]
     [SerializeField] private int Count;
 
-    private List<DragAndDrop> _items;    
+    [SerializeField] private List<DragAndDrop> _items;    
 
     private void Awake()
     {
@@ -24,8 +24,16 @@ public class ItemController : MonoBehaviour
         SpawnPack();
     }
 
+    public List<DragAndDrop> GetAvailableItems()
+    {
+        return _items;
+    }
+
     public void DeleteItem(DragAndDrop objectToDelete)
     {
+        Debug.LogWarning("DeleteItem");
+
+
         if (_items.Contains(objectToDelete))
         {
             _items.Remove(objectToDelete);
@@ -41,7 +49,7 @@ public class ItemController : MonoBehaviour
         for (int i = 0; i < Count; i++)
         {
             int rand = Random.Range(0, _itemPrefab.Count);
-            var newItem = Instantiate(_itemPrefab[rand], _parentPanel[i]);
+            var newItem = Instantiate(_itemPrefab[rand], _parentPanel);
             newItem.Setup(_dragController);
             newItem.SetRand();
             newItem.OnDestroyEvent += () => DeleteItem(newItem);

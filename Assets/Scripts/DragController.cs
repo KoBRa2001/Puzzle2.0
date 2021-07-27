@@ -30,11 +30,11 @@ public class DragController : MonoBehaviour
 
     public bool HasSelectedItem()
     {
-        if(_selectedItem != null)
-        {
-            return _selectedItem.CheckFreeCells();
-        }
-        return false;
-        //return _selectedItem != null;
+        //if(_selectedItem != null)
+        //{
+        //    return _selectedItem.CheckFreeCells();
+        //}
+        //return false;
+        return _selectedItem != null;
     }
 }

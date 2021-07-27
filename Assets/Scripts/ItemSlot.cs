@@ -18,7 +18,8 @@ public class ItemSlot : MonoBehaviour//, IDropHandler
     public Sprite icon;
 
     public int x; 
-    public int y; 
+    public int y;
+
 
     public void SetupPrefab(DiamandItem newPrefab)
     {
@@ -33,7 +34,7 @@ public class ItemSlot : MonoBehaviour//, IDropHandler
     public void Setup(DragController dragController, GridController gridController)
     {
         _dragController = dragController;
-        _gridController = gridController;
+        _gridController = gridController;        
     }
 
     public void ClearSlot()
@@ -53,16 +54,18 @@ public class ItemSlot : MonoBehaviour//, IDropHandler
         if (Input.GetMouseButtonUp(0) && _dragController.HasSelectedItem())
         {
             var selectedItem = _dragController.TakeSelectedItem();
-            icon = selectedItem.Icon;
-            foreach (var item in selectedItem.DiamondsDragList)
-            {
-                item.TakeSlot(icon);
+            if (_gridController.CheckCell(x, y, selectedItem))
+            {                             
+                SetCell(selectedItem);
+                icon = selectedItem.Icon;
+
+                selectedItem.Clear();
+                Destroy(selectedItem.gameObject);
+
+                if (_gridController.CheckGameOver())
+                    Debug.Log("Game Over");
             }
-
-            Destroy(selectedItem.gameObject);
-            _gridController.CalculateCollapse();
-        }
-
+        }        
     }
 
     public void SetItemInSlot(DiamandItem item)
@@ -72,8 +75,13 @@ public class ItemSlot : MonoBehaviour//, IDropHandler
             _itemInSlot.SetSprite(icon);       
     }
 
-    public void SetCell()
-    {        
-        _gridController.SetCell(x, y);
+    public void SetCell(DragAndDrop item)
+    {
+        //TODO: rewrite this, добавити метод в клас GridController SetItem(int x, int y, List<Vector2Int> positions) і викликати його тут
+
+        foreach(var position in item.ChildPosition)
+        {
+            _gridController.SetCell(x + position.x, y + position.y, _diamondPrefab);        
+        }
     }
 }
