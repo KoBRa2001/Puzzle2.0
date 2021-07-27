@@ -11,6 +11,8 @@ public class GridController : MonoBehaviour
     [SerializeField] private ItemSlot itemSlotPrefab;
     [SerializeField] private DragController _dragController;
     [SerializeField] private ItemController _itemController;
+    [SerializeField] private ScoreSystem _scoreSystem;
+    [SerializeField] private PopUpManager _gameOverPanel;
 
     private Vector2 currentPosition = Vector2.zero;
 
@@ -44,7 +46,7 @@ public class GridController : MonoBehaviour
     public void InitSlot(int i, int j)
     {
         var newSlot = Instantiate(itemSlotPrefab, currentPosition, Quaternion.identity, transform);
-        newSlot.Setup(_dragController, this);
+        newSlot.Setup(_dragController, this, _scoreSystem);
 
         //перенести в медот і створити публічні геттери
         newSlot.x = i;
@@ -122,22 +124,38 @@ public class GridController : MonoBehaviour
         }
         Debug.LogError($"Cant find pos");
 
-        return true;
-    }
+        _gameOverPanel.Open();
 
-    private bool IsOn(int x, int y)
+        return true;
+    }   
+
+    public void NewGame()
     {
-        return !(x < 0 || y < 0 || x >= width || y >= heigth);
+        Reset();
+        _scoreSystem.Reset();
+        _itemController.Reset();
     }
 
     private void VerifyGrid()
     {
         HashSet<Vector2Int> itemIndexes = GetDeletedItems();
+
+        _scoreSystem.UpdateScore(itemIndexes.Count);
+
         foreach(var currentPosition in itemIndexes)
         {
             itemCells[currentPosition.x, currentPosition.y].ClearSlot();
             cells[currentPosition.x, currentPosition.y] = false;
         }
+    }
+
+    public void Reset()
+    {
+        foreach(var i in itemCells)
+        {
+            i.ClearSlot();            
+        }
+        cells = new bool[width, heigth];
     }
 
     public HashSet<Vector2Int> GetDeletedItems()
@@ -188,68 +206,5 @@ public class GridController : MonoBehaviour
         return items;
 
         //return null;
-    }
-
-    public bool IsPossibleCollapse(/*int x, int y*/)
-    {
-        bool rowsResult = true;
-        bool columnsResult = true;
-
-        for (int i = 0; i < width; i++)
-        {            
-            for (int j = 0; j < heigth; j++)
-            {
-                rowsResult = rowsResult && cells[i, j];                                
-            }
-            if (rowsResult)
-                break;            
-        }
-
-        for (int i = 0; i < width; i++)
-        {
-            for (int j = 0; j < heigth; j++)
-            {
-                columnsResult = columnsResult && cells[i, j];
-            }
-            if (columnsResult)
-                break;
-        }
-
-        //for(int i = 0; i < width; i++)
-        //{
-        //    if (!cells[x, i])
-        //    {
-        //        columnsResult = false;
-        //        break;
-        //    }
-        //}
-        //for(int j = 0; j < heigth; j++)
-        //{
-        //    if (!cells[j, y])
-        //    {
-        //        rowsResult = false;
-        //        break;
-        //    }
-        //}
-        Debug.Log("Rows " + rowsResult + " Columns " + columnsResult);
-        Debug.Log("Return result " + (rowsResult || columnsResult));
-        //if (rowsResult && !columnsResult)
-        //{
-        //    Debug.Log("Row is full");
-        //    //Debug.Log("Row " + y + " is full");
-        //}
-        //if (!rowsResult && columnsResult)
-        //{
-        //    //Debug.Log("Column " + x + " is full");
-        //    Debug.Log("Column is full");
-        //}
-        //if (rowsResult && columnsResult)
-        //{
-        //    //Debug.Log("Column " + x + " is full and Row " + y + " is full");
-        //    Debug.Log("Column is full and Row is full");
-        //}
-
-        return rowsResult || columnsResult;
-    }
-    
+    }     
 }

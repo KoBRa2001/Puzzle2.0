@@ -8,6 +8,7 @@ public class ItemController : MonoBehaviour
     [SerializeField] private DragController _dragController;
     [SerializeField] private List<DragAndDrop> _itemPrefab;
     [SerializeField] private Transform _parentPanel;
+    [SerializeField] private GridController _gridController;
 
     [Header("Parameters")]
     [SerializeField] private int Count;
@@ -22,6 +23,14 @@ public class ItemController : MonoBehaviour
     private void Start()
     {
         SpawnPack();
+    }
+
+    public void Reset()
+    {
+        foreach(var i in _items)
+        {
+            DeleteItem(i);
+        }                
     }
 
     public List<DragAndDrop> GetAvailableItems()
@@ -56,6 +65,8 @@ public class ItemController : MonoBehaviour
 
             _items.Add(newItem);
         }
+        if (_gridController.CheckGameOver())
+            Debug.Log("Game Over");
     }
 
 }

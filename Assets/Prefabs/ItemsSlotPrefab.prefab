@@ -124,6 +124,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _diamondPrefab: {fileID: 8940789968902478771, guid: ae5bc1db44027df44bef5dd573a11b3b,
     type: 3}
+  _scoreSystem: {fileID: 6988356833486422742, guid: 8de8744fdac04724f9b73cb28eca8199,
+    type: 3}
   icon: {fileID: 0}
   x: 0
   y: 0

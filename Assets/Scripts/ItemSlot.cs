@@ -7,6 +7,7 @@ using UnityEngine.EventSystems;
 public class ItemSlot : MonoBehaviour//, IDropHandler
 {   
     [SerializeField] private DiamandItem _diamondPrefab;
+    [SerializeField] private ScoreSystem _scoreSystem;
 
     private DragController _dragController;
     private GridController _gridController;
@@ -31,10 +32,11 @@ public class ItemSlot : MonoBehaviour//, IDropHandler
         return isEmpty;
     }
 
-    public void Setup(DragController dragController, GridController gridController)
+    public void Setup(DragController dragController, GridController gridController, ScoreSystem scoreSystem)
     {
         _dragController = dragController;
-        _gridController = gridController;        
+        _gridController = gridController;
+        _scoreSystem = scoreSystem;
     }
 
     public void ClearSlot()
@@ -58,6 +60,8 @@ public class ItemSlot : MonoBehaviour//, IDropHandler
             {                             
                 SetCell(selectedItem);
                 icon = selectedItem.Icon;
+
+                _scoreSystem.UpdateScore(selectedItem.ChildPosition.Count);
 
                 selectedItem.Clear();
                 Destroy(selectedItem.gameObject);
