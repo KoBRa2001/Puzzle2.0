@@ -12,13 +12,13 @@ public class GridController : MonoBehaviour
     [SerializeField] private DragController _dragController;
     [SerializeField] private ItemController _itemController;
     [SerializeField] private ScoreSystem _scoreSystem;
-    [SerializeField] private PopUpManager _gameOverPanel;
+    [SerializeField] private GameOverPopUp _gameOverPanel;
 
     private Vector2 currentPosition = Vector2.zero;
 
     private bool[,] cells;
     private ItemSlot[,] itemCells;
-
+    
     private void Awake()
     {
         cells = new bool[width, heigth];
@@ -64,16 +64,23 @@ public class GridController : MonoBehaviour
         foreach(var position in item.ChildPosition)
         {          
             //If out of bounds
-            if (x + position.x >= Mathf.Sqrt(cells.Length) || y + position.y >= Mathf.Sqrt(cells.Length))
+            //if (x + position.x >= Mathf.Sqrt(cells.Length) || y + position.y >= Mathf.Sqrt(cells.Length))
+            if (!IsOnBoard(x + position.x, y + position.y))
             {
                 return false;
             }
             if (cells[x + position.x, y + position.y] == true)
-            {
+            {                
                 return false;
             }
         }
+        AudioManager.Instance.PlayAudio(AudioIndexes.DropInSlot);
         return true;
+    }
+
+    private bool IsOnBoard(int x, int y)
+    {
+        return !(x < 0 || x >= width || y < 0 || y >= heigth);
     }
 
     public void SetCell(int x, int y, DiamandItem prefab)
@@ -107,13 +114,13 @@ public class GridController : MonoBehaviour
                 {
                     if (CheckCell(x, i, item))
                     {
-                        Debug.LogError($"Put here {x} {i} + {item.ChildPosition.Count}");
+                        //Debug.LogError($"Put here {x} {i} + {item.ChildPosition.Count}");
 
                         foreach (var p in item.ChildPosition)
                         {
                             var t = new Vector2Int(x, i);
                             t += p;
-                            Debug.LogError(cells[t.x, t.y]);
+                            //Debug.LogError(cells[t.x, t.y]);
 
                         }
                         return false;
@@ -122,9 +129,11 @@ public class GridController : MonoBehaviour
             }
                      
         }
-        Debug.LogError($"Cant find pos");
+        //Debug.LogError($"Cant find pos");
 
-        _gameOverPanel.Open();
+        _gameOverPanel.GameOver();
+
+        AudioManager.Instance.PlayAudio(AudioIndexes.GameOver);
 
         return true;
     }   
@@ -132,7 +141,7 @@ public class GridController : MonoBehaviour
     public void NewGame()
     {
         Reset();
-        _scoreSystem.Reset();
+        _scoreSystem.Clear();
         _itemController.Reset();
     }
 
@@ -140,12 +149,16 @@ public class GridController : MonoBehaviour
     {
         HashSet<Vector2Int> itemIndexes = GetDeletedItems();
 
-        _scoreSystem.UpdateScore(itemIndexes.Count);
-
-        foreach(var currentPosition in itemIndexes)
+        if (itemIndexes.Count > 0)
         {
-            itemCells[currentPosition.x, currentPosition.y].ClearSlot();
-            cells[currentPosition.x, currentPosition.y] = false;
+            _scoreSystem.UpdateScore(itemIndexes.Count);
+
+            foreach (var currentPosition in itemIndexes)
+            {
+                itemCells[currentPosition.x, currentPosition.y].ClearSlot();
+                cells[currentPosition.x, currentPosition.y] = false;
+            }
+            AudioManager.Instance.PlayAudio(AudioIndexes.ClearRow);
         }
     }
 

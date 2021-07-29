@@ -27,10 +27,16 @@ public class ItemController : MonoBehaviour
 
     public void Reset()
     {
+        List<DragAndDrop> itemsToDelete = new List<DragAndDrop>();
         foreach(var i in _items)
         {
-            DeleteItem(i);
+            itemsToDelete.Add(i);
         }                
+        foreach(var i in itemsToDelete)
+        {
+            DeleteItem(i);
+        }
+        itemsToDelete=null;
     }
 
     public List<DragAndDrop> GetAvailableItems()

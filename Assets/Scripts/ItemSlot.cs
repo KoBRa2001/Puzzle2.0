@@ -20,8 +20,7 @@ public class ItemSlot : MonoBehaviour//, IDropHandler
 
     public int x; 
     public int y;
-
-
+   
     public void SetupPrefab(DiamandItem newPrefab)
     {
         _diamondPrefab = newPrefab;
@@ -51,13 +50,14 @@ public class ItemSlot : MonoBehaviour//, IDropHandler
     private void OnMouseOver()
     {
         if (!isEmpty)
+        {            
             return;
-
+        }
         if (Input.GetMouseButtonUp(0) && _dragController.HasSelectedItem())
         {
             var selectedItem = _dragController.TakeSelectedItem();
             if (_gridController.CheckCell(x, y, selectedItem))
-            {                             
+            {
                 SetCell(selectedItem);
                 icon = selectedItem.Icon;
 
